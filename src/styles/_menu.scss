@@ -1,0 +1,26 @@
+.rw-menu {
+  display: flex;
+
+  &__link {
+    @extend .filter-item;
+    flex: 1;
+    margin-bottom: 10px;
+    padding-top: 280px;
+    font-size: 24px;
+    color: inherit;
+    text-align: center;
+    border: 1px solid #ddd;
+
+    &:not(:first-child) {
+      margin-left: 10px;
+    }
+
+    &--add {
+      background: url("/assets/img/record.png") no-repeat center 10px;
+    }
+
+    &--confirm {
+      background: url("/assets/img/chart.png") no-repeat center 10px;
+    }
+  }
+}

@@ -1,0 +1,50 @@
+.rw-record {
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  border-collapse: separate;
+
+  &--centered {
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  &__tbody {
+    display: block;
+    overflow-x: scroll;
+    max-width: 740px;
+  }
+
+  &__row:not(:last-child) {
+    th, td {
+      border-bottom: 1px solid #ddd;
+    }
+  }
+
+  th, td {
+    white-space: nowrap;
+  }
+
+  &__name {
+    padding-right: 1em;
+    padding-left: 1em;
+    background-color: #eee;
+  }
+
+  &__weight {
+    padding-right: .5em;
+    padding-left: 1em;
+  }
+
+  &__reps {
+    padding: 1em 1em 1em .5em;
+  }
+
+  &__rep {
+    @extend .rw-btn-reflect;
+    cursor: auto;
+
+    &:hover {
+      background-color: inherit;
+    }
+  }
+}

@@ -1,0 +1,61 @@
+body {
+  color: #444;
+}
+
+h1 {
+  padding-bottom: 0.3em;
+  font-size: 2.25em;
+  line-height: 1.2;
+  border-bottom: 1px solid #eee;
+}
+
+h2 {
+  padding-bottom: 0.3em;
+  font-size: 1.75em;
+  line-height: 1.225;
+}
+
+h3 {
+  font-size: 1.5em;
+  line-height: 1.43;
+}
+
+h4 {
+  font-size: 1.25em;
+}
+
+h5 {
+  font-size: 1em;
+}
+
+.rw-container {
+  @extend .centered;
+  width: 800px;
+  padding-right: 10px;
+  padding-left: 10px;
+}
+
+.rw-logo {
+  color: inherit;
+}
+
+.rw-footer {
+  margin-top: 2em;
+  margin-bottom: 2em;
+  font-size: 16px;
+  color: #999;
+  text-align: right;
+}
+
+.rw-main {}
+
+.rw-section {
+  margin-top: 2.5em;
+  margin-bottom: 2.5em;
+}
+
+.rw-panel {
+  padding: 1em 2em;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+}

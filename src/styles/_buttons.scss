@@ -1,0 +1,45 @@
+.rw-btn-select {
+  @extend .btn;
+  background-image: none;
+
+  &:hover {
+    background-image: none;
+  }
+
+  &:active {
+    box-shadow: none;
+  }
+
+  :checked + & {
+    color: #ddd;
+    background-color: #444;
+    border-color: #666;
+  }
+}
+
+.rw-btn-reflect {
+  @extend .btn;
+  background-color: transparent;
+  background-image: none;
+
+  &:hover {
+    background-color: #eee;
+    background-image: none;
+  }
+
+  &:active {
+    box-shadow: none;
+  }
+}
+
+.rw-btn-submit {
+  @extend .btn;
+  @extend .btn-primary;
+  background-color: lighten(#60b044, 4%);
+  background-image: none;
+
+  &:hover {
+    background-color: lighten(#569e3d, 2%);
+    background-image: none;
+  }
+}
