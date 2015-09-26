@@ -10,8 +10,9 @@ import gulpLoadPlugins from 'gulp-load-plugins';
 const $ = gulpLoadPlugins();
 
 gulp.task('server', () => {
-  server.listen(3000);
-  console.log('listening on http://localhost:3000');
+  const port  = process.env.PORT || 8080;
+  server.listen(port);
+  console.log('listening on http://localhost:' + port);
 });
 
 gulp.task('webpack:dev', () =>

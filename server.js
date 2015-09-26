@@ -3,13 +3,13 @@
 import express  from 'express';
 import path     from 'path';
 
-const app = express();
+const app   = express();
 
-app.use('/', express.static('dist'));
+app.use('/', express.static(__dirname + '/dist'));
 
-app.use((req, res) => {
+app.get('*', (req, res) => {
   res.set('Content-Type', 'text/html');
-  res.sendFile(path.resolve(__dirname, 'dist/index.html'));
+  res.sendFile(path.resolve(__dirname, 'dist', 'index.html'));
 });
 
 export default app;
