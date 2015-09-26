@@ -3,10 +3,16 @@
 import runSequence    from 'run-sequence';
 import webpack        from 'webpack';
 import webpackConfig  from './webpack.config';
+import server         from './server';
 
 import gulp from 'gulp';
 import gulpLoadPlugins from 'gulp-load-plugins';
 const $ = gulpLoadPlugins();
+
+gulp.task('server', () => {
+  server.listen(3000);
+  console.log('listening on http://localhost:3000');
+});
 
 gulp.task('webpack:dev', () =>
   gulp.src('src/scripts/index.jsx')
@@ -76,7 +82,7 @@ gulp.task('watch', ['styles:dev', 'images', 'html'], () => {
   gulp.watch(['src/**/*.html'], ['html']);
 });
 
-gulp.task('default', ['webpack:dev', 'watch']);
+gulp.task('default', ['server', 'webpack:dev', 'watch']);
 
 gulp.task('build', ['webpack:build', 'styles:build', 'images', 'html']);
 
