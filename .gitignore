@@ -1,0 +1,8 @@
+# meta data
+.DS_Store
+
+# for dev
+node_modules/
+
+# assets
+dist/
