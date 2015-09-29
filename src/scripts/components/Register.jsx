@@ -1,37 +1,15 @@
 'use strict';
 
 import React      from 'react';
-import PropTypes  from 'react-router';
 import classNames from 'classnames';
 import moment     from 'moment';
+import _          from 'lodash';
 
 import ExerciseActionCreaters from '../actions/ExerciseActionCreaters';
 import ExerciseStore          from '../stores/ExerciseStore';
-import RecordActionCreaters   from '../actions/RecordActionCreaters';
-import RecordStore            from '../stores/RecordStore';
 
 const WEIGHTS = [60, 80, 100, 120, 140, 160, 180];
 const REPS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-
-/*
-[
-  {
-    id: id,
-    contents: [
-      {
-        weight: 80,
-        reps: [8, 8, 8]
-      }, {
-        weight: 80,
-        reps: [8, 8, 8]
-      }, {
-        weight: 80,
-        reps: [8, 8, 8]
-      }
-    ]
-  }
-]
-*/
 
 export default class Register extends React.Component {
   constructor(props) {
@@ -45,9 +23,9 @@ export default class Register extends React.Component {
       records: []
     }
 
-    ExerciseStore.addListener('change', () => {
+    this.handleExerciseStore = () => {
       this.setState({exercises: ExerciseStore.getAll()});
-    });
+    };
 
     this.handleDateChange = () => {
       const date = this.refs.dateField.value;
@@ -59,12 +37,13 @@ export default class Register extends React.Component {
       this.setState({currentExercise: exercise});
     };
 
-    this.handleExerciseAddClick = () => {
-      this.addExercise();
+    this.handleExerciseKeyDown = (e) => {
+      if (e.key === 'Enter') {
+        this.addExercise();
+      }
     };
 
-    this.handleExerciseAddKeyDown = (e) => {
-      if (e.keyCode !== 13) return;
+    this.handleExerciseClick = () => {
       this.addExercise();
     };
 
@@ -77,68 +56,89 @@ export default class Register extends React.Component {
       this.setState({currentWeight: weight});
     };
 
-    this.handleRepAddClick = (rep) => {
+    this.handleAddRepClick = (rep) => {
+      const records = this.state.records;
+      const timestamp = Date.now();
       const exercise = this.state.currentExercise;
       const weight = this.state.currentWeight;
-      if (!exercise || !weight) return;
 
+      if (!exercise) {
+        alert('exercise is not selected');
+        return;
+      }
+
+      if (!weight) {
+        alert('weight is not selected');
+        return;
+      }
+
+      const record = {
+        id: timestamp,
+        exercise: exercise,
+        weight: weight,
+        rep: rep
+      };
+      records.push(record);
+      this.setState({records: records});
+    };
+
+    this.handleRemoveClick = (id) => {
       const records = this.state.records;
-      const addedRecords = records.map((record, i) => {
-        if (record.id === exercise) {
-          let index = -1;
-          record.contents.forEach((content, i) => {
-            if (content.weight === weight) index = i;
-          });
-
-          if (index === -1) {
-            record.contents.push({weight: weight, reps: [rep]});
-          } else {
-            record.contents[index].reps.push(rep);
-          }
-        }
-        return record;
-      });
-
-      this.setState({records: addedRecords});
-    };
-
-    this.handleRepRemoveClick = () => {
-      console.log('remove');
-    };
+      _.remove(records, (record) => record.id === id);
+      this.setState({records: records});
+    }
 
     this.handleSubmitClick = () => {
+      const date = this.state.date;
+      const records = this.state.records;
+
+      if (!date) {
+        alert('date is not inputed');
+        return;
+      }
+
+      if (!records.length) {
+        alert('records is empty');
+        return;
+      }
+
       console.log('登録');
     };
   }
 
-  readyRecord() {
-    const records = this.state.records;
+  addExercise() {
+    const exerciseField = this.refs.exerciseField;
+    const name = exerciseField.value.trim();
 
-    this.state.exercises.forEach(exercise => {
-      const exist = records.some(record => record.id === exercise.id);
-      if (!exist) {
-        records.push({id: exercise.id, contents: []});
-      }
-    });
-
-    this.setState({records: records});
-
-    console.log(records);
+    if (name) {
+      ExerciseActionCreaters.add(name);
+      exerciseField.value = '';
+    }
   }
 
-  addExercise() {
-    const name = this.refs.exerciseField.value;
-    if (!name) return;
-    ExerciseActionCreaters.add(name);
-    this.refs.exerciseField.value = '';
+  getExerciseName(exerciseId) {
+    return _.find(this.state.exercises, {id: exerciseId}).name;
+  }
+
+  getWeights(exerciseId) {
+    const reps = _.filter(this.state.records, {exercise: exerciseId});
+    return _.uniq(_.pluck(reps, 'weight'));
+  }
+
+  getRepsData(exerciseId, weight) {
+    return _.filter(this.state.records, {exercise: exerciseId, weight: weight});
   }
 
   componentDidMount() {
-    this.readyRecord();
+    ExerciseStore.addListener('addExercise', this.handleExerciseStore);
   }
 
-  componentWillUnMount() {
-    //
+  componentWillUnmount() {
+    ExerciseStore.removeListener('addExercise', this.handleExerciseStore);
+  }
+
+  get addedExercises() {
+    return _.uniq(_.pluck(this.state.records, 'exercise'));
   }
 
   render() {
@@ -148,6 +148,7 @@ export default class Register extends React.Component {
 
         <div className="rw-section">
           <h3>日付</h3>
+
           <p>
             <input
              ref="dateField"
@@ -163,21 +164,20 @@ export default class Register extends React.Component {
 
           {this.state.exercises.length ?
             <p>
-              {this.state.exercises.map(exercise =>
-                <span key={exercise.id}>
-                  <input
-                   id={`exercise-${exercise.id}`}
-                   type="radio"
-                   name="exercise"
-                   value={exercise.id}
-                   checked={this.state.currentExercise === exercise.id}
-                   hidden
-                   onChange={this.handleExerciseChange.bind(this)} />
-                  <label
-                   className="rw-btn-select"
-                   htmlFor={`exercise-${exercise.id}`}>{exercise.name}</label>
-                </span>
-              )}
+              {this.state.exercises.map((exercise) => [
+                <input
+                 id={`exercise-${exercise.id}`}
+                 type="radio"
+                 name="exercise"
+                 value={exercise.id}
+                 checked={this.state.currentExercise === exercise.id}
+                 hidden
+                 onChange={this.handleExerciseChange.bind(this)} />,
+
+                <label
+                 className="rw-btn-select"
+                 htmlFor={`exercise-${exercise.id}`}>{exercise.name}</label>
+              ])}
             </p>
           : null}
 
@@ -185,20 +185,21 @@ export default class Register extends React.Component {
             <input
              ref="exerciseField"
              type="text"
-             onKeyDown={this.handleExerciseAddKeyDown.bind(this)} />
+             onKeyDown={this.handleExerciseKeyDown.bind(this)} />
             <button
              className="rw-btn-reflect"
-             onClick={this.handleExerciseAddClick.bind(this)}>追加</button>
+             onClick={this.handleExerciseClick.bind(this)}>追加</button>
           </p>
         </div>
 
         <div className="rw-section">
           <h3>重量</h3>
+
           <p>
             {WEIGHTS.map((weight, i) => {
               const classes = {
                 'rw-btn-reflect': true,
-                'rw-btn-reflect--active': parseInt(this.state.currentWeight) === weight
+                'rw-btn-reflect--active': parseFloat(this.state.currentWeight) === weight
               };
               return (
                 <button
@@ -208,6 +209,7 @@ export default class Register extends React.Component {
               );
             })}
           </p>
+
           <p>
             <label>
               <input
@@ -217,19 +219,20 @@ export default class Register extends React.Component {
                max="500"
                step="0.5"
                value={this.state.currentWeight}
-               onChange={this.handleWeightChange.bind(this)} />kg
+               onChange={this.handleWeightChange.bind(this)} /> kg
             </label>
           </p>
         </div>
 
         <div className="rw-section">
           <h3>レップ数</h3>
+
           <p>
             {REPS.map((rep, i) =>
               <button
                key={i}
                className="rw-btn-reflect"
-               onClick={this.handleRepAddClick.bind(this, rep)}>{rep}</button>
+               onClick={this.handleAddRepClick.bind(this, rep)}>{rep}</button>
             )}
           </p>
         </div>
@@ -237,38 +240,34 @@ export default class Register extends React.Component {
         <div className="rw-panel">
           <h3>{this.state.date ? `${this.state.date} の記録` : '日付を選択してください'}</h3>
 
-          {this.state.records.some(record => record.contents.length) ?
-            <table className="rw-record rw-record--centered">
+          {this.state.records.length ?
+            <table className="rw-record">
               <tbody className="rw-record__tbody">
-                {this.state.records.filter(record => record.contents.length).map(record =>
-                  <tr key={record.id} className="rw-record__row">
-                    <th className="rw-record__name">{this.state.exercises.filter(exercise => exercise.id === record.id)[0].name}</th>
+                {this.addedExercises.map((exerciseId) =>
+                  <tr
+                   key={exerciseId}
+                   className="rw-record__row">
+                    <th className="rw-record__name">{this.getExerciseName(exerciseId)}</th>
 
-
-
-
+                    {this.getWeights(exerciseId).map((weight) => [
+                      <td className="rw-record__weight">{weight} kg</td>,
+                      <td className="rw-record__reps">
+                        {this.getRepsData(exerciseId, weight).map((datum) =>
+                          <button
+                           key={datum.id}
+                           className="rw-btn-reflect"
+                           onClick={this.handleRemoveClick.bind(this, datum.id)}>{datum.rep}</button>
+                        )}
+                      </td>
+                    ])}
                   </tr>
                 )}
               </tbody>
             </table>
-          : null}
 
-
-
-
-          <table className="rw-record rw-record--centered">
-            <tbody className="rw-record__tbody">
-              <tr className="rw-record__row">
-                <th className="rw-record__name">スクワット</th>
-                <th className="rw-record__weight">80 kg</th>
-                <td className="rw-record__reps">
-                  <button
-                   className="rw-btn-reflect"
-                   onClick={this.handleRepRemoveClick.bind(this)}>6</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          : <div className="blankslate clean-background">
+              <h3>記録を追加してください。</h3>
+            </div>}
 
           <p className="form-actions">
             <button
@@ -276,9 +275,6 @@ export default class Register extends React.Component {
              onClick={this.handleSubmitClick.bind(this)}>記録を登録</button>
           </p>
         </div>
-
-
-
       </div>
     );
   }

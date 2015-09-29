@@ -10,23 +10,16 @@ class ExerciseStore extends EventEmitter {
   constructor() {
     super();
     this.data = Util.storage(keyName);
-    AppDispatcher.addListener('addExercise', this.onAddExercise.bind(this));
+    AppDispatcher.addListener('addExercise', this.onAdd.bind(this));
   }
   getAll() {
     return this.data;
   }
-
-//changeExercise
-
-
-  getExercises() {
-    return this.data;
-  }
-  onAddExercise(name) {
+  onAdd(name) {
     const timeStamp = Date.now();
-    this.data.push({ id: timeStamp, name: name });
+    this.data.push({id: timeStamp, name: name});
     Util.storage(keyName, this.data);
-    this.emit('changedExercise');
+    this.emit('addExercise');
   }
 }
 
