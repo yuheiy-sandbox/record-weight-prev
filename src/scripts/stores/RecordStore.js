@@ -9,14 +9,18 @@ const keyName = 'rw_record';
 class RecordStore extends EventEmitter {
   constructor() {
     super();
-    AppDispatcher.addListener('addRecord', this.onAddRecord.bind(this));
+    this.data = Util.storage(keyName);
+    AppDispatcher.addListener('addRecord', this.add.bind(this));
   }
-  getRecords() {
-    //
+  add(date, records) {
+    const timestamp = Date.now();
+    const datum = {id: timestamp, date: date, records: records};
+    this.data.push(datum);
+    Util.storage(keyName, this.data);
+    this.emit('addRecord');
   }
-  onAddRecord(date, content) {
-    console.log('record: store to component');
-    this.emit('addRecordCompleted');
+  getAll() {
+    return this.data;
   }
 }
 

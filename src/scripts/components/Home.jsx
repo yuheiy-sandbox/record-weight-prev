@@ -8,8 +8,8 @@ export default class Header extends React.Component {
     return (
       <div className="rw-main">
         <nav className="rw-menu">
-          <Link className="rw-menu__link rw-menu__link--add" to="/register">記録を追加</Link>
-          <Link className="rw-menu__link rw-menu__link--confirm" to="/confirm">記録を見る</Link>
+          <Link className="rw-menu__link rw-menu__link--register" to="/register">記録を追加</Link>
+          <Link className="rw-menu__link rw-menu__link--result" to="/result">記録を見る</Link>
         </nav>
 
         <div className="rw-panel">

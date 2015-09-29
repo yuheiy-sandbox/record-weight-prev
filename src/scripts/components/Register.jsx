@@ -1,15 +1,23 @@
 'use strict';
 
-import React      from 'react';
-import classNames from 'classnames';
-import moment     from 'moment';
-import _          from 'lodash';
+import React        from 'react';
+import { History }  from 'react-router';
+import reactMixin   from 'react-mixin';
+import classNames   from 'classnames';
+import moment       from 'moment';
+import _            from 'lodash';
 
-import ExerciseActionCreaters from '../actions/ExerciseActionCreaters';
+import ExerciseActionCreators from '../actions/ExerciseActionCreators';
 import ExerciseStore          from '../stores/ExerciseStore';
+import RecordActionCreators   from '../actions/RecordActionCreators';
+import RecordStore            from '../stores/RecordStore';
 
 const WEIGHTS = [60, 80, 100, 120, 140, 160, 180];
 const REPS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
+const mixin = {
+  History: History
+};
 
 export default class Register extends React.Component {
   constructor(props) {
@@ -25,6 +33,10 @@ export default class Register extends React.Component {
 
     this.handleExerciseStore = () => {
       this.setState({exercises: ExerciseStore.getAll()});
+    };
+
+    this.handleRecordStore = () => {
+      this.props.history.pushState(null, '/result');
     };
 
     this.handleDateChange = () => {
@@ -66,7 +78,6 @@ export default class Register extends React.Component {
         alert('exercise is not selected');
         return;
       }
-
       if (!weight) {
         alert('weight is not selected');
         return;
@@ -96,13 +107,12 @@ export default class Register extends React.Component {
         alert('date is not inputed');
         return;
       }
-
       if (!records.length) {
         alert('records is empty');
         return;
       }
 
-      console.log('登録');
+      RecordActionCreators.add(date, records);
     };
   }
 
@@ -110,10 +120,13 @@ export default class Register extends React.Component {
     const exerciseField = this.refs.exerciseField;
     const name = exerciseField.value.trim();
 
-    if (name) {
-      ExerciseActionCreaters.add(name);
-      exerciseField.value = '';
+    if (!name) {
+      alert('exercise name is invalid value');
+      return;
     }
+
+    ExerciseActionCreaters.add(name);
+    exerciseField.value = '';
   }
 
   getExerciseName(exerciseId) {
@@ -131,10 +144,12 @@ export default class Register extends React.Component {
 
   componentDidMount() {
     ExerciseStore.addListener('addExercise', this.handleExerciseStore);
+    RecordStore.addListener('addRecord', this.handleRecordStore);
   }
 
   componentWillUnmount() {
     ExerciseStore.removeListener('addExercise', this.handleExerciseStore);
+    RecordStore.removeListener('addRecord', this.handleRecordStore);
   }
 
   get addedExercises() {
@@ -186,6 +201,7 @@ export default class Register extends React.Component {
              ref="exerciseField"
              type="text"
              onKeyDown={this.handleExerciseKeyDown.bind(this)} />
+
             <button
              className="rw-btn-reflect"
              onClick={this.handleExerciseClick.bind(this)}>追加</button>
@@ -251,6 +267,7 @@ export default class Register extends React.Component {
 
                     {this.getWeights(exerciseId).map((weight) => [
                       <td className="rw-record__weight">{weight} kg</td>,
+
                       <td className="rw-record__reps">
                         {this.getRepsData(exerciseId, weight).map((datum) =>
                           <button
@@ -279,3 +296,5 @@ export default class Register extends React.Component {
     );
   }
 }
+
+reactMixin.onClass(Register, mixin);
