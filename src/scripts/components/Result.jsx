@@ -4,6 +4,7 @@ import React from 'react';
 
 import ExerciseStore  from '../stores/ExerciseStore';
 import RecordStore    from '../stores/RecordStore';
+import Record         from '../components/Record';
 
 export default class Result extends React.Component {
   constructor(props) {
@@ -11,13 +12,13 @@ export default class Result extends React.Component {
 
     this.state = {
       exercises: ExerciseStore.getAll(),
-      filterExercise: null,
-      records: RecordStore.getAll()
+      exerciseFilter: null,
+      records: RecordStore.getAll().reverse()
     };
 
     this.handleExerciseChange = (e) => {
-      const exercise = parseInt(e.currentTarget.value);
-      this.setState({filterExercise: exercise});
+      const exerciseId = parseInt(e.currentTarget.value);
+      this.setState({exerciseFilter: exerciseId});
     };
   }
 
@@ -37,7 +38,7 @@ export default class Result extends React.Component {
                    type="radio"
                    name="exercise"
                    value={exercise.id}
-                   checked={this.state.filterExercise === exercise.id}
+                   checked={this.state.exerciseFilter === exercise.id}
                    hidden
                    onChange={this.handleExerciseChange.bind(this)} />
 
@@ -55,13 +56,11 @@ export default class Result extends React.Component {
            key={record.id}
            className="rw-section">
             <h3>{record.date} の記録</h3>
-            <table className="rw-record">
-              <tbody className="rw-record__tbody">
 
-
-
-              </tbody>
-            </table>
+            <Record
+             exercises={this.state.exercises}
+             exerciseFilter={this.state.exerciseFilter}
+             records={record.records} />
           </div>
         )}
       </div>

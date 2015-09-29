@@ -11,11 +11,12 @@ import ExerciseActionCreators from '../actions/ExerciseActionCreators';
 import ExerciseStore          from '../stores/ExerciseStore';
 import RecordActionCreators   from '../actions/RecordActionCreators';
 import RecordStore            from '../stores/RecordStore';
+import Record                 from '../components/Record';
 
 const WEIGHTS = [60, 80, 100, 120, 140, 160, 180];
 const REPS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
-const mixin = {
+const mixins = {
   History: History
 };
 
@@ -121,25 +122,12 @@ export default class Register extends React.Component {
     const name = exerciseField.value.trim();
 
     if (!name) {
-      alert('exercise name is invalid value');
+      alert('exercise name is empty');
       return;
     }
 
     ExerciseActionCreaters.add(name);
     exerciseField.value = '';
-  }
-
-  getExerciseName(exerciseId) {
-    return _.find(this.state.exercises, {id: exerciseId}).name;
-  }
-
-  getWeights(exerciseId) {
-    const reps = _.filter(this.state.records, {exercise: exerciseId});
-    return _.uniq(_.pluck(reps, 'weight'));
-  }
-
-  getRepsData(exerciseId, weight) {
-    return _.filter(this.state.records, {exercise: exerciseId, weight: weight});
   }
 
   componentDidMount() {
@@ -150,10 +138,6 @@ export default class Register extends React.Component {
   componentWillUnmount() {
     ExerciseStore.removeListener('addExercise', this.handleExerciseStore);
     RecordStore.removeListener('addRecord', this.handleRecordStore);
-  }
-
-  get addedExercises() {
-    return _.uniq(_.pluck(this.state.records, 'exercise'));
   }
 
   render() {
@@ -256,35 +240,11 @@ export default class Register extends React.Component {
         <div className="rw-panel">
           <h3>{this.state.date ? `${this.state.date} の記録` : '日付を選択してください'}</h3>
 
-          {this.state.records.length ?
-            <table className="rw-record">
-              <tbody className="rw-record__tbody">
-                {this.addedExercises.map((exerciseId) =>
-                  <tr
-                   key={exerciseId}
-                   className="rw-record__row">
-                    <th className="rw-record__name">{this.getExerciseName(exerciseId)}</th>
-
-                    {this.getWeights(exerciseId).map((weight) => [
-                      <td className="rw-record__weight">{weight} kg</td>,
-
-                      <td className="rw-record__reps">
-                        {this.getRepsData(exerciseId, weight).map((datum) =>
-                          <button
-                           key={datum.id}
-                           className="rw-btn-reflect"
-                           onClick={this.handleRemoveClick.bind(this, datum.id)}>{datum.rep}</button>
-                        )}
-                      </td>
-                    ])}
-                  </tr>
-                )}
-              </tbody>
-            </table>
-
-          : <div className="blankslate clean-background">
-              <h3>記録を追加してください。</h3>
-            </div>}
+          <Record
+           exercises={this.state.exercises}
+           records={this.state.records}
+           edit={true}
+           onDelete={this.handleRemoveClick.bind(this)} />
 
           <p className="form-actions">
             <button
@@ -297,4 +257,4 @@ export default class Register extends React.Component {
   }
 }
 
-reactMixin.onClass(Register, mixin);
+reactMixin.onClass(Register, mixins);

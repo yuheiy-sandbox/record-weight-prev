@@ -23,10 +23,6 @@
   background-color: transparent;
   background-image: none;
 
-  &--active {
-    background-color: #eee;
-  }
-
   &:not(:first-child) {
     margin-left: 6px;
   }
@@ -38,6 +34,28 @@
 
   &:active {
     box-shadow: none;
+  }
+
+  &--active {
+    background-color: #eee;
+  }
+
+  &--disabled {
+    cursor: default;
+
+    &:hover,
+    &:active {
+      background-color: transparent !important;
+    }
+
+    &:active,
+    &:focus {
+      border-color: #ccc;
+    }
+
+    &:focus {
+      box-shadow: none;
+    }
   }
 }
 
