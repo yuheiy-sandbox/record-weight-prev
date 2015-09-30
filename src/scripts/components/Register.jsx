@@ -120,7 +120,7 @@ export default class Register extends React.Component {
       return;
     }
 
-    ExerciseActionCreaters.add(name);
+    ExerciseActionCreators.add(name);
     exerciseField.value = '';
   }
 
