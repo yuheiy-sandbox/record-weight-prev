@@ -1,11 +1,9 @@
 'use strict';
 
-import React        from 'react';
-import { History }  from 'react-router';
-import reactMixin   from 'react-mixin';
-import classNames   from 'classnames';
-import moment       from 'moment';
-import _            from 'lodash';
+import React                  from 'react';
+import classNames             from 'classnames';
+import moment                 from 'moment';
+import _                      from 'lodash';
 
 import ExerciseActionCreators from '../actions/ExerciseActionCreators';
 import ExerciseStore          from '../stores/ExerciseStore';
@@ -15,10 +13,6 @@ import Record                 from '../components/Record';
 
 const WEIGHTS = [60, 80, 100, 120, 140, 160, 180];
 const REPS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-
-const mixins = {
-  History: History
-};
 
 export default class Register extends React.Component {
   constructor(props) {
@@ -37,7 +31,8 @@ export default class Register extends React.Component {
     };
 
     this.handleRecordStore = () => {
-      this.props.history.pushState(null, '/result');
+      // this.props.history.pushState(null, '/result');
+      this.context.history.pushState(null, '/result');
     };
 
     this.handleDateChange = () => {
@@ -257,4 +252,6 @@ export default class Register extends React.Component {
   }
 }
 
-reactMixin.onClass(Register, mixins);
+Register.contextTypes = {
+  history: React.PropTypes.object
+};

@@ -1,8 +1,8 @@
 'use strict';
 
 import { EventEmitter } from 'events';
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import Util from '../utils';
+import AppDispatcher    from '../dispatcher/AppDispatcher';
+import Util             from '../utils';
 
 const keyName = 'rw_record';
 
