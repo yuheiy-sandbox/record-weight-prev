@@ -1,6 +1,6 @@
 'use strict';
 
-import runSequence    from 'run-sequence';
+// import runSequence    from 'run-sequence';
 import webpack        from 'webpack';
 import webpackConfig  from './webpack.config';
 import server         from './server';
@@ -30,7 +30,7 @@ gulp.task('webpack:build', () =>
     .pipe($.webpack(Object.assign(webpackConfig, {
       plugins: [
         new webpack.optimize.UglifyJsPlugin({
-          compress: { warning: false }
+          compress: { warnings: false }
         })
       ]
     })))
@@ -67,26 +67,24 @@ gulp.task('images', () =>
     .pipe($.size({ title: 'images' }))
 );
 
-gulp.task('html', () =>
-  gulp.src('src/**/*.html')
+gulp.task('copy', () =>
+  gulp.src(['src/index.html', 'src/.htaccesse'])
     .pipe(gulp.dest('dist'))
-    .pipe($.size({ title: 'html' }))
+    .pipe($.size({ title: 'copy' }))
 );
 
 gulp.task('rsync', $.shell.task([
   'rsync -avz --delete -e ssh dist/* yhey:/home/yhey/www/record'
 ]));
 
-gulp.task('watch', ['styles:dev', 'images', 'html'], () => {
+gulp.task('watch', ['styles:dev', 'images', 'copy'], () => {
   gulp.watch(['src/styles/**/*.scss'], ['styles:dev']);
   gulp.watch(['src/images/**/*'], ['images']);
-  gulp.watch(['src/**/*.html'], ['html']);
+  gulp.watch(['src/index.html', 'src/.htaccesse'], ['copy']);
 });
 
 gulp.task('default', ['server', 'webpack:dev', 'watch']);
 
-gulp.task('build', ['webpack:build', 'styles:build', 'images', 'html']);
+gulp.task('build', ['webpack:build', 'styles:build', 'images', 'copy']);
 
-gulp.task('deploy', () =>
-  runSequence('build', 'rsync')
-);
+gulp.task('deploy', ['rsync']);
