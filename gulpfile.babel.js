@@ -73,9 +73,9 @@ gulp.task('html', () =>
     .pipe($.size({ title: 'html' }))
 );
 
-// gulp.task('rsync', $.shell.task([
-//   'rsync -avz --delete -e ssh dist/* yhey:/home/yhey/www/yhey/weight'
-// ]));
+gulp.task('rsync', $.shell.task([
+  'rsync -avz --delete -e ssh dist/* yhey:/home/yhey/www/record'
+]));
 
 gulp.task('watch', ['styles:dev', 'images', 'html'], () => {
   gulp.watch(['src/styles/**/*.scss'], ['styles:dev']);
@@ -87,6 +87,6 @@ gulp.task('default', ['server', 'webpack:dev', 'watch']);
 
 gulp.task('build', ['webpack:build', 'styles:build', 'images', 'html']);
 
-// gulp.task('deploy', () =>
-//   runSequence('build', 'rsync')
-// );
+gulp.task('deploy', () =>
+  runSequence('build', 'rsync')
+);

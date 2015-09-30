@@ -1,9 +1,9 @@
 'use strict';
 
-import React                  from 'react';
-import classNames             from 'classnames';
-import moment                 from 'moment';
-import _                      from 'lodash';
+import React      from 'react';
+import classNames from 'classnames';
+import moment     from 'moment';
+import _          from 'lodash';
 
 import ExerciseActionCreators from '../actions/ExerciseActionCreators';
 import ExerciseStore          from '../stores/ExerciseStore';
@@ -31,7 +31,6 @@ export default class Register extends React.Component {
     };
 
     this.handleRecordStore = () => {
-      // this.props.history.pushState(null, '/result');
       this.context.history.pushState(null, '/result');
     };
 
