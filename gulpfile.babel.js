@@ -74,7 +74,7 @@ gulp.task('copy', () =>
 );
 
 gulp.task('rsync', $.shell.task([
-  'rsync -avz --delete -e ssh dist yhey:/home/yhey/www/record'
+  'rsync -avz --delete -e ssh dist/* yhey:/home/yhey/www/record'
 ]));
 
 gulp.task('watch', ['styles:dev', 'images', 'copy'], () => {
