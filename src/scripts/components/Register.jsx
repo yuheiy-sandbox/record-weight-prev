@@ -94,6 +94,15 @@ export default class Register extends React.Component {
       this.setState({records: records});
     }
 
+    this.handleResetClick = () => {
+      if (confirm('記録をリセットします。よろしいですか？')) {
+        this.setState({
+          date: moment().format('YYYY-MM-DD'),
+          records: []
+        });
+      }
+    };
+
     this.handleSubmitClick = () => {
       const date = this.state.date;
       const records = this.state.records;
@@ -234,7 +243,12 @@ export default class Register extends React.Component {
         </div>
 
         <div className="rw-panel">
-          <h3>{this.state.date ? `${this.state.date} の記録` : '日付を選択してください'}</h3>
+          <h3>
+            {this.state.date ? `${this.state.date} の記録` : '日付を選択してください'}
+            <span
+             className="rw-trash"
+             onClick={this.handleResetClick.bind(this)} />
+          </h3>
 
           <Record
            exercises={this.state.exercises}

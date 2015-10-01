@@ -82,24 +82,29 @@ export default class Result extends React.Component {
           </div>
         : null}
 
-        {this.state.records.map((record) =>
-          <div
-           key={record.id}
-           className="rw-section">
-            <h3>
-              {record.date} の記録
-              <span
-               className="rw-trash"
-               title="記録を削除"
-               onClick={this.handleDeleteClick.bind(this, record.id)} />
-            </h3>
+        {this.state.records.length ?
+          this.state.records.map((record) =>
+            <div
+             key={record.id}
+             className="rw-section">
+              <h3>
+                {record.date} の記録
+                <span
+                 className="rw-trash"
+                 title="記事を削除"
+                 onClick={this.handleDeleteClick.bind(this, record.id)} />
+              </h3>
 
-            <Record
-             exercises={this.state.exercises}
-             exerciseFilter={this.state.exerciseFilter}
-             records={record.records} />
+              <Record
+               exercises={this.state.exercises}
+               exerciseFilter={this.state.exerciseFilter}
+               records={record.records} />
+            </div>
+          )
+        : <div className="rw-section">
+            <p>記録が登録されていません。</p>
           </div>
-        )}
+        }
       </div>
     );
   }

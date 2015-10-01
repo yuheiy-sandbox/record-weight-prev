@@ -9,12 +9,6 @@
     max-width: 740px;
   }
 
-  &__row:not(:last-child) {
-    th, td {
-      border-bottom: 1px solid #ddd;
-    }
-  }
-
   th, td {
     white-space: nowrap;
   }
