@@ -122,6 +122,11 @@ export default class Register extends React.Component {
           date: moment().format('YYYY-MM-DD'),
           currentExercise: null,
           currentWeight: null,
+          errorDateField: false,
+          errorExerciseSelect: false,
+          errorExerciseField: false,
+          errorWeightField: false,
+          errorRecord: false,
           records: []
         });
       }
