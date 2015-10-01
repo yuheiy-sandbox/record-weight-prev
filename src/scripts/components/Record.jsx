@@ -14,7 +14,7 @@ export default class Record extends React.Component {
   }
 
   getExerciseName(exerciseId) {
-    return _.find(this.props.exercises, {id: exerciseId}).name;
+    return this.props.exercises.length ? _.find(this.props.exercises, {id: exerciseId}).name : null;
   }
 
   getWeights(exerciseId) {
