@@ -118,11 +118,11 @@ export default class Register extends React.Component {
       const records = this.state.records;
 
       if (!date) {
-        alert('date is not inputed');
+        alert('日付が選択されていません。');
         return;
       }
       if (!records.length) {
-        alert('records is empty');
+        alert('記録が追加されていません。');
         return;
       }
 
@@ -137,7 +137,7 @@ export default class Register extends React.Component {
     const name = exerciseField.value.trim();
 
     if (!name) {
-      alert('exercise name is empty');
+      alert('種目名が入力されていません。');
       return;
     }
 
