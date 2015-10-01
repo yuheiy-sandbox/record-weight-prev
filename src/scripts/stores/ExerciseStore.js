@@ -12,6 +12,7 @@ class ExerciseStore extends EventEmitter {
     this.data = Util.storage(keyName);
     AppDispatcher.addListener('addExercise', this.add.bind(this));
   }
+
   add(name) {
     const timestamp = Date.now();
     const datum = {id: timestamp, name: name};

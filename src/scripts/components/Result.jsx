@@ -2,9 +2,10 @@
 
 import React from 'react';
 
-import ExerciseStore  from '../stores/ExerciseStore';
-import RecordStore    from '../stores/RecordStore';
-import Record         from '../components/Record';
+import ExerciseStore        from '../stores/ExerciseStore';
+import RecordActionCreators from '../actions/RecordActionCreators';
+import RecordStore          from '../stores/RecordStore';
+import Record               from '../components/Record';
 
 export default class Result extends React.Component {
   constructor(props) {
@@ -12,14 +13,32 @@ export default class Result extends React.Component {
 
     this.state = {
       exercises: ExerciseStore.getAll(),
-      exerciseFilter: null,
-      records: RecordStore.getAll().reverse()
+      exerciseFilter: -1,
+      records: RecordStore.getAll()
+    };
+
+    this.handleRecordStore = () => {
+      this.setState({records: RecordStore.getAll()});
     };
 
     this.handleExerciseChange = (e) => {
       const exerciseId = parseInt(e.currentTarget.value);
       this.setState({exerciseFilter: exerciseId});
     };
+
+    this.handleDeleteClick = (recordId) => {
+      if (confirm('記録を削除します。よろしいですか？')) {
+        RecordActionCreators.delete(recordId);
+      }
+    };
+  }
+
+  componentDidMount() {
+    RecordStore.addListener('deleteRecord', this.handleRecordStore);
+  }
+
+  componentWillUnmount() {
+    RecordStore.removeListener('deleteRecord', this.handleRecordStore);
   }
 
   render() {
@@ -29,24 +48,36 @@ export default class Result extends React.Component {
 
         {this.state.exercises.length ?
           <div className="rw-section">
-            <h3>特定種目のみ表示</h3>
+            <h3>表示種目を選択</h3>
             <p>
-              {this.state.exercises.map((exercise) =>
-                <span key={exercise.id}>
-                  <input
-                   id={`exercise-${exercise.id}`}
-                   type="radio"
-                   name="exercise"
-                   value={exercise.id}
-                   checked={this.state.exerciseFilter === exercise.id}
-                   hidden
-                   onChange={this.handleExerciseChange.bind(this)} />
+              <input
+               id="exercise-all"
+               type="radio"
+               name="exercise"
+               value="-1"
+               checked={this.state.exerciseFilter === -1}
+               hidden
+               onChange={this.handleExerciseChange.bind(this)} />
 
-                  <label
-                   className="rw-btn-select"
-                   htmlFor={`exercise-${exercise.id}`}>{exercise.name}</label>
-                </span>
-              )}
+              <label
+               className="rw-btn-select"
+               htmlFor="exercise-all">全て表示</label>
+
+
+              {this.state.exercises.map((exercise) => [
+                <input
+                 id={`exercise-${exercise.id}`}
+                 type="radio"
+                 name="exercise"
+                 value={exercise.id}
+                 checked={this.state.exerciseFilter === exercise.id}
+                 hidden
+                 onChange={this.handleExerciseChange.bind(this)} />,
+
+                <label
+                 className="rw-btn-select"
+                 htmlFor={`exercise-${exercise.id}`}>{exercise.name}</label>
+              ])}
             </p>
           </div>
         : null}
@@ -55,7 +86,13 @@ export default class Result extends React.Component {
           <div
            key={record.id}
            className="rw-section">
-            <h3>{record.date} の記録</h3>
+            <h3>
+              {record.date} の記録
+              <span
+               className="rw-trash"
+               title="記録を削除"
+               onClick={this.handleDeleteClick.bind(this, record.id)} />
+            </h3>
 
             <Record
              exercises={this.state.exercises}

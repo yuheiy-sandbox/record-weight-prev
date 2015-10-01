@@ -11,9 +11,9 @@ import Register from './components/Register';
 import Result   from './components/Result';
 import NoMatch  from './components/NoMatch';
 
-const product = location.hostname !== 'location';
+const production = location.hostname !== 'localhost';
 
-if (product) {
+if (production) {
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -25,7 +25,7 @@ if (product) {
 const handleUpdate = () => {
   window.scrollTo(0, 0);
 
-  if (product) {
+  if (production) {
     ga('send', 'pageview', location.pathname);
   }
 };

@@ -107,7 +107,9 @@ export default class Register extends React.Component {
         return;
       }
 
-      RecordActionCreators.add(date, records);
+      if (confirm('記録を登録しますか？')) {
+        RecordActionCreators.add(date, records);
+      }
     };
   }
 

@@ -34,7 +34,7 @@ export default class Record extends React.Component {
     if (!records.length) {
       return false;
     }
-    if (exerciseFilter) {
+    if (exerciseFilter !== -1) {
       return allExercises.indexOf(exerciseFilter) !== -1 ? [exerciseFilter] : false;
     }
 
@@ -89,7 +89,7 @@ export default class Record extends React.Component {
 
 Record.defaultProps = {
   exercises: [],
-  exerciseFilter: null,
+  exerciseFilter: -1,
   records: [],
   edit: false
 };

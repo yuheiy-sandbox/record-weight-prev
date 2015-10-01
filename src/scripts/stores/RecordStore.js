@@ -1,5 +1,7 @@
 'use strict';
 
+import _ from 'lodash';
+
 import { EventEmitter } from 'events';
 import AppDispatcher    from '../dispatcher/AppDispatcher';
 import Util             from '../utils';
@@ -11,7 +13,9 @@ class RecordStore extends EventEmitter {
     super();
     this.data = Util.storage(keyName);
     AppDispatcher.addListener('addRecord', this.add.bind(this));
+    AppDispatcher.addListener('deleteRecord', this.delete.bind(this));
   }
+
   add(date, records) {
     const timestamp = Date.now();
     const datum = {id: timestamp, date: date, records: records};
@@ -19,8 +23,15 @@ class RecordStore extends EventEmitter {
     Util.storage(keyName, this.data);
     this.emit('addRecord');
   }
+
+  delete(recordId) {
+    _.remove(this.data, (record) => record.id === recordId);
+    Util.storage(keyName, this.data);
+    this.emit('deleteRecord');
+  }
+
   getAll() {
-    return this.data;
+    return _.sortBy(this.data, 'date').reverse();
   }
 }
 
