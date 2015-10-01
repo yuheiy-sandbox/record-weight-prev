@@ -122,7 +122,7 @@ export default class Result extends React.Component {
             <p>登録された全てのデータを破棄します。</p>
             <p>
               <button
-               className="rw-btn-reflect"
+               className="rw-btn-danger"
                onClick={this.handleAllDelete.bind(this)}>全て削除</button>
             </p>
           </div>

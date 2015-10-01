@@ -59,6 +59,11 @@
   }
 }
 
+.rw-btn-danger {
+  @extend .rw-btn-reflect;
+  color: $status-closed;
+}
+
 .rw-btn-submit {
   @extend .btn;
   @extend .btn-primary;
