@@ -68,7 +68,7 @@ gulp.task('images', () =>
 );
 
 gulp.task('copy', () =>
-  gulp.src(['src/index.html', 'src/.htaccesse'])
+  gulp.src(['src/index.html', 'src/favicon.ico', 'src/.htaccesse'])
     .pipe(gulp.dest('dist'))
     .pipe($.size({ title: 'copy' }))
 );
@@ -80,7 +80,7 @@ gulp.task('rsync', $.shell.task([
 gulp.task('watch', ['styles:dev', 'images', 'copy'], () => {
   gulp.watch(['src/styles/**/*.scss'], ['styles:dev']);
   gulp.watch(['src/images/**/*'], ['images']);
-  gulp.watch(['src/index.html', 'src/.htaccesse'], ['copy']);
+  gulp.watch(['src/index.html', 'src/favicon.ico', 'src/.htaccesse'], ['copy']);
 });
 
 gulp.task('default', ['server', 'webpack:dev', 'watch']);
