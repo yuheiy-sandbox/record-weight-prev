@@ -12,6 +12,8 @@ import RecordStore            from '../stores/RecordStore';
 import Record                 from '../components/Record';
 
 const WEIGHTS = [60, 80, 100, 120, 140, 160, 180];
+const MIN_WEIGHT = 1;
+const MAX_WEIGHT = 500;
 const REPS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
 export default class Register extends React.Component {
@@ -55,12 +57,20 @@ export default class Register extends React.Component {
     };
 
     this.handleWeightClick = (weight) => {
-      this.setState({currentWeight: weight});
+      if (weight >= MIN_WEIGHT && weight <= MAX_WEIGHT) {
+        this.setState({currentWeight: weight});
+      }
+      if (weight <= MIN_WEIGHT) {
+        this.setState({currentWeight: MIN_WEIGHT});
+      }
+      if (weight >= MAX_WEIGHT) {
+        this.setState({currentWeight: MAX_WEIGHT});
+      }
     };
 
     this.handleWeightChange = () => {
       const weight = this.refs.weightField.value;
-      this.setState({currentWeight: weight});
+      this.setState({currentWeight: parseFloat(weight)});
     };
 
     this.handleAddRepClick = (rep) => {
@@ -70,11 +80,11 @@ export default class Register extends React.Component {
       const weight = this.state.currentWeight;
 
       if (!exercise) {
-        alert('exercise is not selected');
+        alert('種目が選択されていません。');
         return;
       }
       if (!weight) {
-        alert('weight is not selected');
+        alert('重量を選択してください。');
         return;
       }
 
@@ -183,7 +193,7 @@ export default class Register extends React.Component {
                  htmlFor={`exercise-${exercise.id}`}>{exercise.name}</label>
               ])}
             </p>
-          : null}
+          : <p>トレーニング種目を追加してください。（例：スクワット、ベンチプレスなど）</p>}
 
           <p>
             <input
@@ -220,12 +230,20 @@ export default class Register extends React.Component {
               <input
                ref="weightField"
                type="number"
-               min="1"
-               max="500"
+               min={MIN_WEIGHT}
+               max={MAX_WEIGHT}
                step="0.5"
                value={this.state.currentWeight}
                onChange={this.handleWeightChange.bind(this)} /> kg
             </label>
+
+            <button
+             className="rw-btn-reflect"
+             onClick={this.handleWeightClick.bind(this, this.state.currentWeight - 5)}>- 5</button>
+
+            <button
+             className="rw-btn-reflect"
+             onClick={this.handleWeightClick.bind(this, this.state.currentWeight + 5)}>+ 5</button>
           </p>
         </div>
 

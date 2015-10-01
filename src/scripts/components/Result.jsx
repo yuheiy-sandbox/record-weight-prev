@@ -63,7 +63,6 @@ export default class Result extends React.Component {
                className="rw-btn-select"
                htmlFor="exercise-all">全て表示</label>
 
-
               {this.state.exercises.map((exercise) => [
                 <input
                  id={`exercise-${exercise.id}`}
