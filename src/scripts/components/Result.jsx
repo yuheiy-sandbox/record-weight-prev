@@ -13,7 +13,7 @@ export default class Result extends React.Component {
     super(props);
 
     this.state = {
-      exercises: ExerciseStore.getAll(),
+      exercises: [],
       exerciseFilter: -1,
       records: RecordStore.getAll()
     };
@@ -49,6 +49,8 @@ export default class Result extends React.Component {
     ExerciseStore.addListener('deleteAllExercises', this.handleExerciseStore);
     RecordStore.addListener('deleteRecord', this.handleRecordStore);
     RecordStore.addListener('deleteAllRecords', this.handleRecordStore);
+
+    this.handleExerciseStore();
   }
 
   componentWillUnmount() {

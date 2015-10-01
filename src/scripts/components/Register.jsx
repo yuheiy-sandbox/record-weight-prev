@@ -21,7 +21,7 @@ export default class Register extends React.Component {
     super(props);
 
     this.state = {
-      exercises: ExerciseStore.getAll(),
+      exercises: [],
       date: moment().format('YYYY-MM-DD'),
       currentExercise: null,
       currentWeight: null,
@@ -169,6 +169,8 @@ export default class Register extends React.Component {
   componentDidMount() {
     ExerciseStore.addListener('addExercise', this.handleExerciseStore);
     RecordStore.addListener('addRecord', this.handleRecordStore);
+
+    this.handleExerciseStore();
   }
 
   componentWillUnmount() {
