@@ -10,6 +10,10 @@ class ExerciseActionCreaters {
   add(name) {
     this.dispatcher.emit('addExercise', name);
   }
+
+  deleteAll() {
+    this.dispatcher.emit('deleteAllExercises');
+  }
 }
 
 export default new ExerciseActionCreaters();

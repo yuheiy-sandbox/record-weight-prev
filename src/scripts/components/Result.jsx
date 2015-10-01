@@ -2,10 +2,11 @@
 
 import React from 'react';
 
-import ExerciseStore        from '../stores/ExerciseStore';
-import RecordActionCreators from '../actions/RecordActionCreators';
-import RecordStore          from '../stores/RecordStore';
-import Record               from '../components/Record';
+import ExerciseActionCreators from '../actions/ExerciseActionCreators';
+import ExerciseStore          from '../stores/ExerciseStore';
+import RecordActionCreators   from '../actions/RecordActionCreators';
+import RecordStore            from '../stores/RecordStore';
+import Record                 from '../components/Record';
 
 export default class Result extends React.Component {
   constructor(props) {
@@ -15,6 +16,10 @@ export default class Result extends React.Component {
       exercises: ExerciseStore.getAll(),
       exerciseFilter: -1,
       records: RecordStore.getAll()
+    };
+
+    this.handleExerciseStore = () => {
+      this.setState({exercises: ExerciseStore.getAll()});
     };
 
     this.handleRecordStore = () => {
@@ -31,14 +36,25 @@ export default class Result extends React.Component {
         RecordActionCreators.delete(recordId);
       }
     };
+
+    this.handleAllDelete = () => {
+      if (confirm('登録された全てのデータを削除します。よろしいですか？')) {
+        ExerciseActionCreators.deleteAll();
+        RecordActionCreators.deleteAll();
+      }
+    };
   }
 
   componentDidMount() {
+    ExerciseStore.addListener('deleteAllExercises', this.handleExerciseStore);
     RecordStore.addListener('deleteRecord', this.handleRecordStore);
+    RecordStore.addListener('deleteAllRecords', this.handleRecordStore);
   }
 
   componentWillUnmount() {
+    ExerciseStore.removeListener('deleteAllExercises', this.handleExerciseStore);
     RecordStore.removeListener('deleteRecord', this.handleRecordStore);
+    RecordStore.removeListener('deleteAllRecords', this.handleRecordStore);
   }
 
   render() {
@@ -81,29 +97,39 @@ export default class Result extends React.Component {
           </div>
         : null}
 
-        {this.state.records.length ?
-          this.state.records.map((record) =>
-            <div
-             key={record.id}
-             className="rw-section">
-              <h3>
-                {record.date} の記録
-                <span
-                 className="rw-trash"
-                 title="記事を削除"
-                 onClick={this.handleDeleteClick.bind(this, record.id)} />
-              </h3>
+        {this.state.records.map((record) =>
+          <div
+           key={record.id}
+           className="rw-section">
+            <h3>
+              {record.date} の記録
+              <span
+               className="rw-trash"
+               title="記事を削除"
+               onClick={this.handleDeleteClick.bind(this, record.id)} />
+            </h3>
 
-              <Record
-               exercises={this.state.exercises}
-               exerciseFilter={this.state.exerciseFilter}
-               records={record.records} />
-            </div>
-          )
-        : <div className="rw-section">
-            <p>記録が登録されていません。</p>
+            <Record
+             exercises={this.state.exercises}
+             exerciseFilter={this.state.exerciseFilter}
+             records={record.records} />
           </div>
-        }
+        )}
+
+        {this.state.exercises.length || this.state.records.length ?
+          <div className="rw-section">
+            <h3>登録データを全て削除</h3>
+            <p>登録された全てのデータを破棄します。</p>
+            <p>
+              <button
+               className="rw-btn-reflect"
+               onClick={this.handleAllDelete.bind(this)}>全て削除</button>
+            </p>
+          </div>
+
+        : <div className="rw-section">
+            <p>データが登録されていません。</p>
+          </div>}
       </div>
     );
   }

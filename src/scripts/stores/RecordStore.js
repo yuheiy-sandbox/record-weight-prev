@@ -14,6 +14,7 @@ class RecordStore extends EventEmitter {
     this.data = Util.storage(keyName);
     AppDispatcher.addListener('addRecord', this.add.bind(this));
     AppDispatcher.addListener('deleteRecord', this.delete.bind(this));
+    AppDispatcher.addListener('deleteAllRecords', this.deleteAll.bind(this));
   }
 
   add(date, records) {
@@ -28,6 +29,12 @@ class RecordStore extends EventEmitter {
     _.remove(this.data, (record) => record.id === recordId);
     Util.storage(keyName, this.data);
     this.emit('deleteRecord');
+  }
+
+  deleteAll() {
+    this.data = [];
+    Util.storage(keyName, this.data);
+    this.emit('deleteAllRecords');
   }
 
   getAll() {

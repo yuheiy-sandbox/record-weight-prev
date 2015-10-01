@@ -11,6 +11,7 @@ class ExerciseStore extends EventEmitter {
     super();
     this.data = Util.storage(keyName);
     AppDispatcher.addListener('addExercise', this.add.bind(this));
+    AppDispatcher.addListener('deleteAllExercises', this.deleteAll.bind(this));
   }
 
   add(name) {
@@ -20,6 +21,13 @@ class ExerciseStore extends EventEmitter {
     Util.storage(keyName, this.data);
     this.emit('addExercise');
   }
+
+  deleteAll() {
+    this.data = [];
+    Util.storage(keyName, this.data);
+    this.emit('deleteAllExercises');
+  }
+
   getAll() {
     return this.data;
   }

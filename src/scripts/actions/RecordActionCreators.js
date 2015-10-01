@@ -14,6 +14,10 @@ class RecordActionCreators {
   delete(recordId) {
     this.dispatcher.emit('deleteRecord', recordId);
   }
+
+  deleteAll() {
+    this.dispatcher.emit('deleteAllRecords');
+  }
 }
 
 export default new RecordActionCreators();

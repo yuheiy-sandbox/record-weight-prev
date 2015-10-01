@@ -193,12 +193,13 @@ export default class Register extends React.Component {
                  htmlFor={`exercise-${exercise.id}`}>{exercise.name}</label>
               ])}
             </p>
-          : <p>トレーニング種目を追加してください。（例：スクワット、ベンチプレスなど）</p>}
+          : <p>トレーニング種目を追加してください。</p>}
 
           <p>
             <input
              ref="exerciseField"
              type="text"
+             placeholder="例）スクワット"
              onKeyDown={this.handleExerciseKeyDown.bind(this)} />
 
             <button
