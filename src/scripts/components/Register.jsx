@@ -30,7 +30,7 @@ export default class Register extends React.Component {
       errorExerciseField: false,
       errorWeightField: false,
       errorRecord: false,
-      records: []
+      reps: []
     }
 
     this.handleExerciseStore = () => {
@@ -84,7 +84,7 @@ export default class Register extends React.Component {
     };
 
     this.handleAddRepClick = (rep) => {
-      const records = this.state.records;
+      const records = this.state.reps;
       const timestamp = Date.now();
       const exercise = this.state.currentExercise;
       const weight = this.state.currentWeight;
@@ -111,7 +111,7 @@ export default class Register extends React.Component {
     };
 
     this.handleRemoveClick = (id) => {
-      const records = this.state.records;
+      const records = this.state.reps;
       _.remove(records, (record) => record.id === id);
       this.setState({records: records});
     }
@@ -134,21 +134,21 @@ export default class Register extends React.Component {
 
     this.handleSubmitClick = () => {
       const date = this.state.date;
-      const records = this.state.records;
+      const reps = this.state.reps;
       let error = false;
 
       if (!date) {
         this.setState({errorDateField: true});
         error = true;
       }
-      if (!records.length) {
+      if (!reps.length) {
         this.setState({errorRecord: true});
         error = true;
       }
       if (error) { return; }
 
       if (confirm('記録を登録しますか？')) {
-        RecordActionCreators.add(date, records);
+        RecordActionCreators.add(date, reps);
       }
     };
   }
@@ -166,11 +166,13 @@ export default class Register extends React.Component {
     exerciseField.value = '';
   }
 
+  componentWillMount() {
+    this.handleExerciseStore();
+  }
+
   componentDidMount() {
     ExerciseStore.addListener('addExercise', this.handleExerciseStore);
     RecordStore.addListener('addRecord', this.handleRecordStore);
-
-    this.handleExerciseStore();
   }
 
   componentWillUnmount() {
@@ -219,7 +221,7 @@ export default class Register extends React.Component {
           <h3>種目</h3>
 
           {this.state.errorExerciseSelect ?
-            <p className="text-closed">種目が選択されていません。</p>
+            <p className="text-error">種目が選択されていません。</p>
           : null}
 
           {this.state.exercises.length ?
@@ -308,7 +310,7 @@ export default class Register extends React.Component {
           <h3>レップ数</h3>
 
           {this.state.errorRecord ?
-            <p className="text-closed">データが追加されていません。</p>
+            <p className="text-error">データが追加されていません。</p>
           : null}
 
           <p>
@@ -331,7 +333,7 @@ export default class Register extends React.Component {
 
           <Record
            exercises={this.state.exercises}
-           records={this.state.records}
+           records={this.state.reps}
            edit={true}
            onDelete={this.handleRemoveClick.bind(this)} />
 

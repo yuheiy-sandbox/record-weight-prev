@@ -1,5 +1,7 @@
 'use strict';
 
+import _ from 'lodash';
+
 import { EventEmitter } from  'events';
 import AppDispatcher    from '../dispatcher/AppDispatcher';
 import Util             from '../utils';
@@ -11,6 +13,7 @@ class ExerciseStore extends EventEmitter {
     super();
     this.data = Util.storage(keyName);
     AppDispatcher.addListener('addExercise', this.add.bind(this));
+    AppDispatcher.addListener('deleteExercise', this.delete.bind(this));
     AppDispatcher.addListener('deleteAllExercises', this.deleteAll.bind(this));
   }
 
@@ -20,6 +23,12 @@ class ExerciseStore extends EventEmitter {
     this.data.push(datum);
     Util.storage(keyName, this.data);
     this.emit('addExercise');
+  }
+
+  delete(id) {
+    _.remove(this.data, (exercise) => exercise.id === id);
+    Util.storage(keyName, this.data);
+    this.emit('deleteExercise');
   }
 
   deleteAll() {

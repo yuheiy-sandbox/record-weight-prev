@@ -14,7 +14,7 @@ export default class Record extends React.Component {
   }
 
   getExerciseName(exerciseId) {
-    return this.props.exercises.length ? _.find(this.props.exercises, {id: exerciseId}).name : null;
+    return _.find(this.props.exercises, {id: exerciseId}).name;
   }
 
   getWeights(exerciseId) {
@@ -95,9 +95,9 @@ Record.defaultProps = {
 };
 
 Record.propTypes = {
-  exercises: React.PropTypes.array,
+  exercises: React.PropTypes.array.isRequired,
   exerciseFilter: React.PropTypes.number,
-  records: React.PropTypes.array,
+  records: React.PropTypes.array.isRequired,
   edit: React.PropTypes.bool,
   onDelete: React.PropTypes.func
 };

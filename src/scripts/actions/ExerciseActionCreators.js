@@ -11,6 +11,10 @@ class ExerciseActionCreaters {
     this.dispatcher.emit('addExercise', name);
   }
 
+  delete(id) {
+    this.dispatcher.emit('deleteExercise', id);
+  }
+
   deleteAll() {
     this.dispatcher.emit('deleteAllExercises');
   }

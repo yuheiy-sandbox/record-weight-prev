@@ -17,9 +17,9 @@ class RecordStore extends EventEmitter {
     AppDispatcher.addListener('deleteAllRecords', this.deleteAll.bind(this));
   }
 
-  add(date, records) {
+  add(date, reps) {
     const timestamp = Date.now();
-    const datum = {id: timestamp, date: date, records: records};
+    const datum = {id: timestamp, date: date, reps: reps};
     this.data.push(datum);
     Util.storage(keyName, this.data);
     this.emit('addRecord');

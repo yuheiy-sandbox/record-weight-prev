@@ -1,6 +1,7 @@
 'use strict';
 
-import React from 'react';
+import React  from 'react';
+import _      from 'lodash';
 
 import ExerciseActionCreators from '../actions/ExerciseActionCreators';
 import ExerciseStore          from '../stores/ExerciseStore';
@@ -15,7 +16,8 @@ export default class Result extends React.Component {
     this.state = {
       exercises: [],
       exerciseFilter: -1,
-      records: RecordStore.getAll()
+      records: [],
+      errorDeleteExercise: false
     };
 
     this.handleExerciseStore = () => {
@@ -31,9 +33,25 @@ export default class Result extends React.Component {
       this.setState({exerciseFilter: exerciseId});
     };
 
-    this.handleDeleteClick = (recordId) => {
+    this.handleDeleteRecordClick = (recordId) => {
       if (confirm('記録を削除します。よろしいですか？')) {
         RecordActionCreators.delete(recordId);
+      }
+    };
+
+    this.handleDeleteExerciseClick = (exerciseId) => {
+      const isRegistered = this.state.records.some((record) =>
+        record.reps.some((rep) => rep.exercise === exerciseId));
+
+      if (isRegistered) {
+        this.setState({errorDeleteExercise: true});
+        return;
+      }
+
+      const exerciseName = _.find(this.state.exercises, {id: exerciseId}).name;
+
+      if (confirm(`${exerciseName}を削除します。よろしいですか？`)) {
+        ExerciseActionCreators.delete(exerciseId);
       }
     };
 
@@ -45,15 +63,20 @@ export default class Result extends React.Component {
     };
   }
 
+  componentWillMount() {
+    this.handleExerciseStore();
+    this.handleRecordStore();
+  }
+
   componentDidMount() {
+    ExerciseStore.addListener('deleteExercise', this.handleExerciseStore);
     ExerciseStore.addListener('deleteAllExercises', this.handleExerciseStore);
     RecordStore.addListener('deleteRecord', this.handleRecordStore);
     RecordStore.addListener('deleteAllRecords', this.handleRecordStore);
-
-    this.handleExerciseStore();
   }
 
   componentWillUnmount() {
+    ExerciseStore.removeListener('deleteExercise', this.handleExerciseStore);
     ExerciseStore.removeListener('deleteAllExercises', this.handleExerciseStore);
     RecordStore.removeListener('deleteRecord', this.handleRecordStore);
     RecordStore.removeListener('deleteAllRecords', this.handleRecordStore);
@@ -108,15 +131,33 @@ export default class Result extends React.Component {
               <span
                className="rw-trash"
                title="記事を削除"
-               onClick={this.handleDeleteClick.bind(this, record.id)} />
+               onClick={this.handleDeleteRecordClick.bind(this, record.id)} />
             </h3>
 
             <Record
              exercises={this.state.exercises}
              exerciseFilter={this.state.exerciseFilter}
-             records={record.records} />
+             records={record.reps} />
           </div>
         )}
+
+        {this.state.exercises.length ?
+          <div className="rw-section">
+            <h3>登録した種目を削除</h3>
+            {this.state.errorDeleteExercise ?
+              <p className="text-error">記録が登録されている種目は削除できません。</p>
+            : null}
+
+            <p>
+              {this.state.exercises.map((exercise) =>
+                <button
+                 key={exercise.id}
+                 className="rw-btn-danger"
+                 onClick={this.handleDeleteExerciseClick.bind(this, exercise.id)}>{exercise.name}</button>
+              )}
+            </p>
+          </div>
+        : null}
 
         {this.state.exercises.length || this.state.records.length ?
           <div className="rw-section">
