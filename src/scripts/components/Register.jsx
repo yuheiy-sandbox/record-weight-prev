@@ -62,7 +62,7 @@ export default class Register extends React.Component {
     };
 
     this.handleExerciseFieldChange = () => {
-      this.setState({errorExerciseField: false});
+      this.setState({errorExerciseField: false, errorExerciseRegistered: false});
     };
 
     this.handleWeightClick = (weight) => {
@@ -127,7 +127,7 @@ export default class Register extends React.Component {
           errorExerciseField: false,
           errorWeightField: false,
           errorRecord: false,
-          records: []
+          reps: []
         });
       }
     };
@@ -159,6 +159,13 @@ export default class Register extends React.Component {
 
     if (!name) {
       this.setState({errorExerciseField: true});
+      return;
+    }
+
+    const isRegistered = this.state.exercises.some((exercise) => exercise.name === name);
+
+    if (isRegistered) {
+      this.setState({errorExerciseRegistered: true});
       return;
     }
 
@@ -222,6 +229,10 @@ export default class Register extends React.Component {
 
           {this.state.errorExerciseSelect ?
             <p className="text-error">種目が選択されていません。</p>
+          : null}
+
+          {this.state.errorExerciseRegistered ?
+            <p className="text-error">すでに登録されている種目です。</p>
           : null}
 
           {this.state.exercises.length ?
