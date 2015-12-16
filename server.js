@@ -5,7 +5,7 @@ import path     from 'path';
 
 const app   = express();
 
-app.use('/', express.static(__dirname + '/dist'));
+app.use('/record-weight', express.static(__dirname + '/dist'));
 
 app.get('*', (req, res) => {
   res.set('Content-Type', 'text/html');
