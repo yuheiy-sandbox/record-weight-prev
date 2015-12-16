@@ -3,7 +3,7 @@
 import React                          from 'react';
 import ReactDOM                       from 'react-dom';
 import { Router, Route, IndexRoute }  from 'react-router';
-import { createHistory }              from 'history';
+import { createHistory, useBasename } from 'history';
 
 import App      from './components/App';
 import Home     from './components/Home';
@@ -39,7 +39,11 @@ const routes = (
   </Route>
 );
 
+const history = useBasename(createHistory)({
+  basename: '/record-weight'
+});
+
 ReactDOM.render(
-  <Router history={createHistory()} routes={routes} onUpdate={handleUpdate} />,
+  <Router history={history} routes={routes} onUpdate={handleUpdate} />,
   document.getElementById('app')
 );

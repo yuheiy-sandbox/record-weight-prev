@@ -73,10 +73,6 @@ gulp.task('copy', () =>
     .pipe($.size({ title: 'copy' }))
 );
 
-gulp.task('rsync', $.shell.task([
-  'rsync -avz --delete -e ssh dist/* yhey:/home/yhey/www/record'
-]));
-
 gulp.task('watch', ['styles:dev', 'images', 'copy'], () => {
   gulp.watch(['src/styles/**/*.scss'], ['styles:dev']);
   gulp.watch(['src/images/**/*'], ['images']);
@@ -87,4 +83,7 @@ gulp.task('default', ['server', 'webpack:dev', 'watch']);
 
 gulp.task('build', ['webpack:build', 'styles:build', 'images', 'copy']);
 
-gulp.task('deploy', ['rsync']);
+gulp.task('deploy', () =>
+  gulp.src('dist/**/*')
+    .pipe($.ghPages())
+);
